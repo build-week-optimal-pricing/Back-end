@@ -1,13 +1,13 @@
 //build
 const router = require('express').Router();
 //db helpers
-const authDb = require('../../data/routeHelpers/auth-model');
+const { hostControls } = require('../../data/routeHelpers/auth-model');
 //mw
 const { regHostMw } = require('../middleware/auth/reg-mw');
 
 router.post('/', ...regHostMw, (req, res) => {
 
-  authDb.addHost(req.body)
+  hostControls.addHost(req.body)
     .then( resou => {
       res.status(200).json({ message: `added new host`, resource: resou })
     })
@@ -15,14 +15,14 @@ router.post('/', ...regHostMw, (req, res) => {
 
 router.delete('/:hostId', (req, res) => {
   const hostId = parseInt(req.params.hostId);
-  authDb.removeHost(hostId)
+  hostControls.removeHost(hostId)
     .then( resou => {
       console.log(resou, 'log of .removeHost resource resolving');
       resou
         ?
           res.status(200).json({ message: `deleted host`, resource: resou })
         :
-          res.status(400).json({ error: `unsure of error origin, could not delete host`, resource: resou })
+          res.status(400).json({ error: `host does not exist`, resource: resou })
     })
     .catch( err => {
       console.log(err);

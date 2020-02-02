@@ -1,9 +1,12 @@
 const db = require('./dbConfig');
 
-const hosts = {
-  //admins
+const adminFinders = {
+  findAdmins,
+  findAdminById, //findAdminById(id)
+  findAdminByUsername, //findAdminByUsername(username)
+}
 
-  //hosts
+const hostFinders = {
   findHosts,
   findHostById, //findHostById(id)
   findHostByUsername, //findHostByUsername(username)
@@ -12,7 +15,8 @@ const hosts = {
 }
 
 module.exports = {
-  hosts,
+  hostFinders,
+  adminFinders,
   
 }
 
@@ -25,4 +29,15 @@ function findHostById(id) {
 }
 function findHostByUsername(username) {
   return db('hosts').where({ username }).first();
+}
+
+//admins
+function findAdmins() {
+  return db('admins');
+}
+function findAdminById(id) {
+  return db('admins').where({ id }).first();
+}
+function findAdminByUsername(username) {
+  return db('admins').where({ username }).first();
 }

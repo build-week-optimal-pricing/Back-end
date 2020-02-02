@@ -29,13 +29,13 @@ const docs = `
         <h3>Host Registration</h3>
         <ul ${style = route__list}>
           <lh ${style = list__lh}>POST /api/auth/registerHost</lh>
-          <li>Receives: { [username], [password] }</li>
-          <li>Returns: { [message], [resource]: {[id], [username]} }</li>
+          <li>Receives: { username: <username>, password: <password> }</li>
+          <li>Returns: { message: [message], resource: [resource]: { id: [hostId], username: [username] } }</li>
         </ul>
         <ul>
-          <lh ${style = list__lh}>GET /api/auth/removeUser</lh>
-          <li ${style = list__item}>Receives: { [id] }</li>
-          <li ${style = list__item}>Returns: { [message]/[error], [username], [id] }</li>
+          <lh ${style = list__lh}>GET /api/auth/removeUser/:id</lh>
+          <li ${style = list__item}>No payload required</li>
+          <li ${style = list__item}>Returns: { message/error: [message]/[error], username: [username], id: [hostId] }</li>
         </ul>
       </div>
       <ul>

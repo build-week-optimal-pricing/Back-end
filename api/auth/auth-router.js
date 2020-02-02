@@ -4,8 +4,10 @@ const router = require('express').Router();
 //auth routes
 const loginRouter = require('./login-router');
 const regHostRouter = require('./regHost-router');
+const regAdminRouter = require('./regAdmin-router');
 
 router.use('/registerHost', regHostRouter);
+router.use('/registerAdmin', regAdminRouter);
 router.use('/login', loginRouter);
 
 //test get
