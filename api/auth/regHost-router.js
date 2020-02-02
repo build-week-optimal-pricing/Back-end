@@ -20,7 +20,7 @@ router.delete('/:hostId', (req, res) => {
       console.log(resou, 'log of .removeHost resource resolving');
       resou
         ?
-          res.status(200).json({ message: `deleted host`, resou: resou })
+          res.status(200).json({ message: `deleted host`, resource: resou })
         :
           res.status(400).json({ error: `unsure of error origin, could not delete host`, resource: resou })
     })
