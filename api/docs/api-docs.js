@@ -26,32 +26,36 @@ const docs = `
     <div ${style = auth__cont}>
       <h2 ${style = __h2}>Auth</h2>
       <div ${style = auth__reg__cont}>
+
         <h3>Host Registration</h3>
         <ul ${style = route__list}>
           <lh ${style = list__lh}>POST /api/auth/registerHost</lh>
-          <li>Receives: { username: <username>, password: <password> }</li>
+          <li>Expects: { username: <username>, password: <password> }</li>
           <li>Returns: { message: [message], resource: [resource]: { id: [hostId], username: [username] } }</li>
         </ul>
         <ul>
-          <lh ${style = list__lh}>GET /api/auth/removeUser/:id</lh>
+          <lh ${style = list__lh}>DELETE /api/auth/registerHost:id</lh>
           <li ${style = list__item}>No payload required</li>
-          <li ${style = list__item}>Returns: { message/error: [message]/[error], username: [username], id: [hostId] }</li>
+          <li ${style = list__item}>Returns: { message/error: [message]/[error], resource: [number deleted] }</li>
+        </ul>
+
+        <h3>Admin Registration</h3>
+        <ul>
+          <lh ${style = list__lh}>POST /api/auth/registerAdmin</lh>
+          <li ${style = list__item}>Expects: { username: [username], password: [password] }</li>
+          <li ${style = list__item}>Returns: { message: [message], resource: [username]}</li>
+        </ul>
+
+      </div>
+      <div>
+        <h3>Auth</h3>
+        <ul>
+          <lh ${style = list__lh}>Login</lh>
+          <li ${style = list__item}>Expects: { username: [username], password: [password] }</li>
+          <li ${style = list__item}>Returns: { message: [message], token: [token] }</li>
         </ul>
       </div>
-      <ul>
-        <lh ${style = list__lh}>Login</lh>
-      </ul>
 
-      <ul>
-        <lh ${style = list__lh}>Logout</lh>
-      </ul>
-
-    </div>
-    <div ${style = host__cont}>
-      <h2 ${style = __h2}>Hosts</h2>
-    </div>
-    <div>
-      <h2 ${style = __h2}>Listings</h2>
     </div>
   </div>
 </div>

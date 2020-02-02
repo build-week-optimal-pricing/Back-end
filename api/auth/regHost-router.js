@@ -9,7 +9,7 @@ router.post('/', ...regHostMw, (req, res) => {
 
   hostControls.addHost(req.body)
     .then( resou => {
-      res.status(200).json({ message: `added new host`, resource: resou })
+      res.status(201).json({ message: `added new host`, resource: resou[0] })
     })
 });
 

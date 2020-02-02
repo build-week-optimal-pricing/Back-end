@@ -9,7 +9,7 @@ router.post('/', ...regAdminMw, (req, res) => {
 
   adminControls.addAdmin(req.body)
     .then( resou => {
-      res.status(200).json({ message: `added new admin`, resource: resou })
+      res.status(201).json({ message: `added new admin`, resource: resou[0] })
     })
 });
 

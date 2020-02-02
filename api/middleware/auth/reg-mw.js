@@ -35,7 +35,7 @@ function reg__credsExist(req, res, next) {
     ?
       next()
     :
-      res.status(400).json({ error: `payload missing username & password` })
+      res.status(400).json({ error: `host credentials missing` })
 
 }
 

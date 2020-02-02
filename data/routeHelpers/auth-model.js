@@ -27,7 +27,7 @@ function removeHost(hostId) {
 
 //one can remove an admin by id, however id information will not be made available
 function addAdmin(admin) {
-  return db('admins').insert(admin).returning(['username']);
+  return db('admins').insert(admin).returning('username');
 }
 function removeAdmin(adminId) {
   return db('admins').where({ id: adminId }).del();
