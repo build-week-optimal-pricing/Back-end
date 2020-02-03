@@ -2,9 +2,18 @@
 exports.up = function(knex) {
   return knex.schema.createTable('listings', table => {
     table.increments().unsigned();
-    table.text('image')
-      .unique();
-    table.text('address')
+    table.text('image');
+
+    table.text('street')
+      .notNullable();
+
+    table.text('city')
+      .notNullable();
+
+    table.text('state')
+      .notNullable();
+
+    table.text('zip')
       .notNullable();
 
     table.integer('bedrooms')

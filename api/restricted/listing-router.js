@@ -1,6 +1,10 @@
 //build
 const router = require('express').Router();
+//db
 const { listingFinders } = require('../../data/finders');
+const listingDb = require('../../data/routeHelpers/listing-model');
+//mw
+const { listingMw } = require('../middleware/restricted');
 
 // fetch all listings. setup admin perms
 router.get('/', (req, res) => {
@@ -27,18 +31,42 @@ router.get('/:hostId', (req, res) => {
 })
 
 // add a listing
-router.post('/', (req, res) => {
-
+router.post('/', ...listingMw.addListingMw, (req, res) => {
+// mw checks payload to be present and address filled in
+  listingDb.addListing(req.body)
+    .then( resou => {
+      res.status(200).json({ message: `added a new listing`, resource: resou })
+    })
+    .catch( err => {
+      console.log(err);
+      res.status(500).json({ error: `could not add listing` })
+    })
 })
 
 // remove a listing by id
 router.delete('/:listingId', (req, res) => {
   const listingId = req.params.id;
+  listingDb.removeListing(listingId)
+    .then( resou => {
+      res.status(200).json({ message: `removed listing`, resource: resou })
+    })
+    .catch( err => {
+      console.log(err);
+      res.status(500).json({ error: `internal server error, could not remove listing` })
+    })
 });
 
 // edit a listing by id and payload
 router.put('/:listingId', (req, res) => {
   const listingId = req.params.id;
+  listingDb.editListing(req.body, listingId)  
+    .then( resou => {
+      res.status(200).json({ message: `successfully editted listing`, resource: resou })
+    })
+    .catch( err => {
+      console.log(err);
+      res.status(500).json({ error: `internal status error, could not edit listing` })
+    })
 });
 
 module.exports = router;
