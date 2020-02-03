@@ -10,9 +10,7 @@ module.exports = {
 //add listing
 function addListing(listing) {
   return db('listings').insert(listing)
-    .then( ids => {
-      return listingFinders.findListingById(ids[0]);
-    })
+    .returning('*');
 }
 //remove listing
 function removeListing(id) {
