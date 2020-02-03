@@ -14,10 +14,17 @@ const hostFinders = {
 
 }
 
+const listingFinders = {
+  findListings,
+  findListingById, //findListingById(id)
+  findListingsByHostId, //findListingByHostId(hostId)
+}
+
 module.exports = {
   hostFinders,
   adminFinders,
-  
+  listingFinders,
+
 }
 
 //hosts
@@ -41,3 +48,18 @@ function findAdminById(id) {
 function findAdminByUsername(username) {
   return db('admins').where({ username }).first();
 }
+
+//listings
+function findListings() {
+  return db('listings');
+}
+
+function findListingById(id) {
+  return db('listing').where({ id }).first();
+}
+
+function findListingsByHostId(hostId) {
+  return db('listing').where({ id }).first();
+}
+
+// can I build logic to find listing by hostname?
