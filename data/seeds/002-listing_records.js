@@ -1,13 +1,16 @@
 
 exports.seed = function(knex) {
-  // Deletes ALL existing entries
-  return knex('table_name').del()
-    .then(function () {
-      // Inserts seed entries
-      return knex('table_name').insert([
-        {id: 1, colName: 'rowValue1'},
-        {id: 2, colName: 'rowValue2'},
-        {id: 3, colName: 'rowValue3'}
-      ]);
-    });
-};
+
+  return knex('listings').insert([
+    {host_id: 1, neighborhood: 'Reinickendorf', bedrooms: 2, bathrooms: 3, beds: 4, availability: 50, deposit: 500, cleaning_fee: 50, min_nights: 3, room_type: "Private room"},
+    {host_id: 1, neighborhood: 'Reinickendorf', bedrooms: 2, bathrooms: 3, beds: 4, availability: 50, deposit: 500, cleaning_fee: 50, min_nights: 3, room_type: "Private room"},
+    {host_id: 1, neighborhood: 'Reinickendorf', bedrooms: 2, bathrooms: 3, beds: 4, availability: 50, deposit: 500, cleaning_fee: 50, min_nights: 3, room_type: "Private room"},
+    {host_id: 1, neighborhood: 'Reinickendorf', bedrooms: 2, bathrooms: 3, beds: 4, availability: 50, deposit: 500, cleaning_fee: 50, min_nights: 3, room_type: "Private room"},
+    {host_id: 1, neighborhood: 'Reinickendorf', bedrooms: 2, bathrooms: 3, beds: 4, availability: 50, deposit: 500, cleaning_fee: 50, min_nights: 3, room_type: "Private room"},
+    {host_id: 1, neighborhood: 'Reinickendorf', bedrooms: 2, bathrooms: 3, beds: 4, availability: 50, deposit: 500, cleaning_fee: 50, min_nights: 3, room_type: "Private room"},
+    {host_id: 1, neighborhood: 'Reinickendorf', bedrooms: 2, bathrooms: 3, beds: 4, availability: 50, deposit: 500, cleaning_fee: 50, min_nights: 3, room_type: "Private room"},
+    {host_id: 1, neighborhood: 'Reinickendorf', bedrooms: 2, bathrooms: 3, beds: 4, availability: 50, deposit: 500, cleaning_fee: 50, min_nights: 3, room_type: "Private room"},
+    {host_id: 1, neighborhood: 'Reinickendorf', bedrooms: 2, bathrooms: 3, beds: 4, availability: 50, deposit: 500, cleaning_fee: 50, min_nights: 3, room_type: "Private room"}
+  ])
+
+}

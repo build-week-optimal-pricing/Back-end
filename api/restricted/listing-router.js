@@ -7,8 +7,6 @@ const listingDb = require('../../data/routeHelpers/listing-model');
 const { listingMw } = require('../middleware/restricted');
 //helpers
 const { listingHelpers } = require('../helpers')
-//axios
-const axios = require('axios');
 
 router.get('/', (req, res) => {
   listingFinders.findListings()
