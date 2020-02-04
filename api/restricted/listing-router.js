@@ -111,8 +111,8 @@ function generatePayload(listing, host) {
     cleaning_fee: parseInt(listing.cleaning_fee),
     min_nights: listing.min_nights,
     // host data
-    listings_count: host.listings_count ? host.listings_count  : 1,
-    num_reviews: host.num_reviews ? host.num_reviews : 1,
-    last_review_time: host.last_review_time ? host.last_review_time : 999999
+    listings_count: host.listings_count ? host.listings_count : undefined,
+    num_reviews: host.num_reviews ? host.num_reviews : undefined,
+    last_review_time: host.last_review_time ? host.last_review_time : undefined
   }
 }
