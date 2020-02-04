@@ -2,6 +2,8 @@
 const router = require('express').Router();
 //routes
 const listingRouter = require('./listing-router');
+//mw
+const { restricted } = require('../middleware/restricted');
 
 router.use('/listings', listingRouter);
 
