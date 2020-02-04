@@ -23,8 +23,7 @@ const listingFinders = {
 module.exports = {
   hostFinders,
   adminFinders,
-  listingFinders,
-
+  listingFinders
 }
 
 //hosts
@@ -62,4 +61,25 @@ function findListingsByHostId(hostId) {
   return db('listings').where({ host_id: hostId });
 }
 
-// can I build logic to find listing by hostname?
+//ds object
+// function buildDSObject(host_id) {
+//   return db('listings as l')
+//     .select(
+//       // 'l.neighborhood',
+//       // 'l.bedrooms',
+//       // 'l.room_type',
+//       // 'l.bathrooms',
+//       // 'l.beds',
+//       // 'l.availability',
+//       // 'l.deposit',
+//       // 'l.cleaning_fee',
+//       // 'l.min_nights',
+//       // 'h.listings_count',
+//       // 'h.num_reviews',
+//       // 'h.last_review_time'
+//       '*'
+//     )
+//     .join('hosts as h', 'l.host_id', 'h.id')
+//     .where({ host_id: host_id })
+
+// }

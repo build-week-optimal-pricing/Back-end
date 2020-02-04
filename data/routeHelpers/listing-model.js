@@ -9,8 +9,7 @@ module.exports = {
 
 //add listing
 function addListing(listing) {
-  return db('listings').insert(listing)
-    .returning('*');
+  return db('listings').insert(listing).returning('*');
 }
 //remove listing
 function removeListing(id) {

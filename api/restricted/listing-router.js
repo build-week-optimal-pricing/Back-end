@@ -1,7 +1,7 @@
 //build
 const router = require('express').Router();
 //db
-const { listingFinders } = require('../../data/finders');
+const { listingFinders, hostFinders, buildDSObject } = require('../../data/finders');
 const listingDb = require('../../data/routeHelpers/listing-model');
 //mw
 const { listingMw } = require('../middleware/restricted');
@@ -35,11 +35,34 @@ router.get('/:hostId', (req, res) => {
 
 router.post('/', ...listingMw.addListingMw, (req, res) => {
   listingDb.addListing(req.body)
-    .then( resou => {
-      // upon succesful add, get information about host with the id of host_id fkey in listing
-      // build a separate object to send to DS api by using a function that takes 2 objects and generates a 3rd
-      // axios call, then response
-      res.status(200).json({ message: `added a new listing`, resource: resou })
+    .then( listing => {
+      const listingsHostId = listing[0].host_id;
+      hostFinders.findHostById(listingsHostId)
+        .then( host => {
+          console.log(host, 'host');
+// recap: I attempted to join hostbody by host_id grabbed from listing added when user adds listing. However, because user is not required to enter all datapoints, the join fails due to certain fields being undefined. I aim to solve this problem by doing separate finds and manually joining with a function
+          const sendThisToDS = generatePayload(listing[0], host);
+          console.log(sendThisToDS, 'ds object')
+          axios.post('https://optimalprice.stromsy.com/estimate-price', sendThisToDS)
+            .then( dsRes => {
+              console.log(dsRes.data);
+              const price = dsRes.data.price;
+              const listingQuoted = {
+                ...listing[0],
+                price
+              }
+              res.status(200).json({ message: `consumed ds-api to return a price quote`, resource: listingQuoted })
+            })
+            .catch( err => {
+              res.status(500).json({ message: `could not consume ds-api to return price quote` })
+              console.log(err);
+            })
+
+        })
+        .catch( err => {
+          console.log(err);
+          res.status(500).json({ message: `internal server error` })
+        })
     })
     .catch( err => {
       console.log(err);
@@ -74,3 +97,22 @@ router.delete('/:listingId', (req, res) => {
 });
 
 module.exports = router;
+
+function generatePayload(listing, host) {
+  return {
+    // listing data
+    neighborhood: listing.neighborhood,
+    bedrooms: listing.bedrooms,
+    room_type: listing.room_type,
+    bathrooms: listing.bathrooms,
+    beds: listing.beds,
+    availability: listing.availability,
+    deposit: parseInt(listing.deposit),
+    cleaning_fee: parseInt(listing.cleaning_fee),
+    min_nights: listing.min_nights,
+    // host data
+    listings_count: host.listings_count ? host.listings_count  : 1,
+    num_reviews: host.num_reviews ? host.num_reviews : 1,
+    last_review_time: host.last_review_time ? host.last_review_time : 999999
+  }
+}
