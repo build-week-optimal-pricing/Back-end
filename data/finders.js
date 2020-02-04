@@ -18,6 +18,7 @@ const listingFinders = {
   findListings,
   findListingById, //findListingById(id)
   findListingsByHostId, //findListingByHostId(hostId)
+  countListingsByHostId //countListingsByHostId(hostId)
 }
 
 module.exports = {
@@ -61,25 +62,6 @@ function findListingsByHostId(hostId) {
   return db('listings').where({ host_id: hostId });
 }
 
-//ds object
-// function buildDSObject(host_id) {
-//   return db('listings as l')
-//     .select(
-//       // 'l.neighborhood',
-//       // 'l.bedrooms',
-//       // 'l.room_type',
-//       // 'l.bathrooms',
-//       // 'l.beds',
-//       // 'l.availability',
-//       // 'l.deposit',
-//       // 'l.cleaning_fee',
-//       // 'l.min_nights',
-//       // 'h.listings_count',
-//       // 'h.num_reviews',
-//       // 'h.last_review_time'
-//       '*'
-//     )
-//     .join('hosts as h', 'l.host_id', 'h.id')
-//     .where({ host_id: host_id })
-
-// }
+function countListingsByHostId(hostId) {
+  return db('listings').count('id as count').where({ host_id: hostId }).first();
+}// make sure this returns an integer
