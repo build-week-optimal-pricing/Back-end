@@ -5,6 +5,8 @@ const { listingFinders, hostFinders, buildDSObject } = require('../../data/finde
 const listingDb = require('../../data/routeHelpers/listing-model');
 //mw
 const { listingMw } = require('../middleware/restricted');
+//helpers
+const { listingHelpers } = require('../helpers')
 //axios
 const axios = require('axios');
 
@@ -39,7 +41,7 @@ router.post('/', ...listingMw.addListingMw, (req, res) => {
           hostFinders.findHostById(listing[0].host_id)
           .then( host => {
             host.listings_count = parseInt(count);
-            getPriceEst(listing, generatePayload(listing[0], host), res);
+            listingHelpers.getPriceEst(listing, listingHelpers.generatePayload(listing[0], host), res);
           })
           .catch( err => {
             console.log(err);
@@ -62,11 +64,12 @@ router.put('/:listingId', (req, res) => {
     .then( listing => {
 
       listingFinders.countListingsByHostId(listing[0].host_id)
-        .then( ({ count }) => { 
+        .then( ({ count }) => {
           host.listings_count = parseInt(count);
+
           hostFinders.findHostById(listing[0].host_id)
           .then( host => {
-            getPriceEst(listing, generatePayload(listing[0], host), res);
+            listingHelpers.getPriceEst(listing, listingHelpers.generatePayload(listing[0], host), res);
           })
           .catch( err => {
             console.log(err);
@@ -100,40 +103,38 @@ router.delete('/:listingId', (req, res) => {
 
 module.exports = router;
 
-function generatePayload(listing, host) {
-  return {
-    // listing data
-    neighborhood: listing.neighborhood ? listing.neighborhood : undefined,
-    bedrooms: listing.bedrooms ? listing.bedrooms : undefined,
-    room_type: listing.room_type ? listing.room_type : undefined,
-    bathrooms: listing.bathrooms ? listing.bathrooms : undefined,
-    beds: listing.beds ? listing.beds : undefined,
-    availability: listing.availability ? listing.availability : undefined,
-    deposit: listing.deposit ? listing.deposit : undefined,
-    cleaning_fee: listing.cleaning_fee ? listing.cleaning_fee: undefined,
-    min_nights: listing.min_nights ? listing.min_nights : undefined,
-    // host data
-    listings_count: host.listings_count ? host.listings_count : undefined,
-    num_reviews: host.num_reviews ? host.num_reviews : undefined,
-    last_review_time: host.last_review_time ? host.last_review_time : undefined
-  }
-}
+// function generatePayload(listing, host) {
+//   return {
+//     // listing data
+//     neighborhood: listing.neighborhood ? listing.neighborhood : undefined,
+//     bedrooms: listing.bedrooms ? listing.bedrooms : undefined,
+//     room_type: listing.room_type ? listing.room_type : undefined,
+//     bathrooms: listing.bathrooms ? listing.bathrooms : undefined,
+//     beds: listing.beds ? listing.beds : undefined,
+//     availability: listing.availability ? listing.availability : undefined,
+//     deposit: listing.deposit ? listing.deposit : undefined,
+//     cleaning_fee: listing.cleaning_fee ? listing.cleaning_fee: undefined,
+//     min_nights: listing.min_nights ? listing.min_nights : undefined,
+//     // host data
+//     listings_count: host.listings_count ? host.listings_count : undefined,
+//     num_reviews: host.num_reviews ? host.num_reviews : undefined,
+//     last_review_time: host.last_review_time ? host.last_review_time : undefined
+//   }
+// }
 
-function getPriceEst(listing, sendThisToDS, res) {
-  console.log(sendThisToDS, 'ds object');
-  axios.post('https://optimalprice.stromsy.com/estimate-price', sendThisToDS)
-  .then( dsRes => {
-    const price = dsRes.data.price;
-    const listingQuoted = {
-      ...listing[0],
-      price
-    }
-    res.status(200).json({ message: `consumed ds-api to return a price quote`, resource: listingQuoted })
-  })
-  .catch( err => {
-    res.status(500).json({ message: `could not consume ds-api to return price quote` })
-    console.log(err);
-  })
-}
-
-// function recountListings()
+// function getPriceEst(listing, sendThisToDS, res) {
+//   console.log(sendThisToDS, 'ds object');
+//   axios.post('https://optimalprice.stromsy.com/estimate-price', sendThisToDS)
+//   .then( dsRes => {
+//     const price = dsRes.data.price;
+//     const listingQuoted = {
+//       ...listing[0],
+//       price
+//     }
+//     res.status(200).json({ message: `consumed ds-api to return a price quote`, resource: listingQuoted })
+//   })
+//   .catch( err => {
+//     res.status(500).json({ message: `could not consume ds-api to return price quote` })
+//     console.log(err);
+//   })
+// }
