@@ -39,8 +39,6 @@ router.post('/', ...listingMw.addListingMw, (req, res) => {
       const listingsHostId = listing[0].host_id;
       hostFinders.findHostById(listingsHostId)
         .then( host => {
-          console.log(host, 'host');
-// recap: I attempted to join hostbody by host_id grabbed from listing added when user adds listing. However, because user is not required to enter all datapoints, the join fails due to certain fields being undefined. I aim to solve this problem by doing separate finds and manually joining with a function
           const sendThisToDS = generatePayload(listing[0], host);
           console.log(sendThisToDS, 'ds object')
           axios.post('https://optimalprice.stromsy.com/estimate-price', sendThisToDS)
@@ -74,8 +72,32 @@ router.post('/', ...listingMw.addListingMw, (req, res) => {
 router.put('/:listingId', (req, res) => {
   const listingId = req.params.listingId;
   listingDb.editListing(req.body, listingId)  
-    .then( resou => {
-      res.status(200).json({ message: `successfully editted listing`, resource: resou[0] })
+    .then( listing => {
+      const listingsHostId = listing[0].host_id;
+      hostFinders.findHostById(listingsHostId)
+        .then( host => {
+          const sendThisToDS = generatePayload(listing[0], host);
+          console.log(sendThisToDS, 'ds object')
+          axios.post('https://optimalprice.stromsy.com/estimate-price', sendThisToDS)
+            .then( dsRes => {
+              console.log(dsRes.data);
+              const price = dsRes.data.price;
+              const listingQuoted = {
+                ...listing[0],
+                price
+              }
+              res.status(200).json({ message: `consumed ds-api to return a price quote`, resource: listingQuoted })
+            })
+            .catch( err => {
+              res.status(500).json({ message: `could not consume ds-api to return price quote` })
+              console.log(err);
+            })
+        })
+        .catch( err => {
+          console.log(err);
+          res.status(500).json({ message: `internal server error, could not resolve editting host` })
+        })
+      // res.status(200).json({ message: `successfully editted listing`, resource: resou[0] })
     })
     .catch( err => {
       console.log(err);
