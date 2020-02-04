@@ -5,6 +5,8 @@ const { listingFinders } = require('../../data/finders');
 const listingDb = require('../../data/routeHelpers/listing-model');
 //mw
 const { listingMw } = require('../middleware/restricted');
+//axios
+const axios = require('axios');
 
 // fetch all listings. setup admin perms
 router.get('/', (req, res) => {
@@ -31,10 +33,12 @@ router.get('/:hostId', (req, res) => {
     })
 })
 
-// add a listing
 router.post('/', ...listingMw.addListingMw, (req, res) => {
   listingDb.addListing(req.body)
     .then( resou => {
+      // upon succesful add, get information about host with the id of host_id fkey in listing
+      // build a separate object to send to DS api by using a function that takes 2 objects and generates a 3rd
+      // axios call, then response
       res.status(200).json({ message: `added a new listing`, resource: resou })
     })
     .catch( err => {
