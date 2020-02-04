@@ -11,6 +11,10 @@ router.post('/', ...regAdminMw, (req, res) => {
     .then( resou => {
       res.status(201).json({ message: `added new admin`, resource: resou[0] })
     })
+    .catch( err => {
+      console.log(err)
+      res.status(500).json({ error: `could not register admin user` })
+    })
 });
 
 router.delete('/:adminId', (req, res) => {
