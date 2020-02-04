@@ -8,7 +8,6 @@ const { listingMw } = require('../middleware/restricted');
 //axios
 const axios = require('axios');
 
-// fetch all listings. setup admin perms
 router.get('/', (req, res) => {
   listingFinders.findListings()
     .then( resou => {
@@ -19,11 +18,8 @@ router.get('/', (req, res) => {
     })
 })
 
-// fetch listing by hostId. setup host && admin perms
-// returns an array
 router.get('/:hostId', (req, res) => {
-  const hostId = req.params.hostId;
-  listingFinders.findListingsByHostId(hostId)
+  listingFinders.findListingsByHostId(req.params.hostId)
     .then( resou => {
       res.status(200).json({ message: `fetched listing by host id`, resource: resou })
     })
@@ -36,79 +32,63 @@ router.get('/:hostId', (req, res) => {
 router.post('/', ...listingMw.addListingMw, (req, res) => {
   listingDb.addListing(req.body)
     .then( listing => {
-      const listingsHostId = listing[0].host_id;
-      hostFinders.findHostById(listingsHostId)
-        .then( host => {
-          const sendThisToDS = generatePayload(listing[0], host);
-          console.log(sendThisToDS, 'ds object')
-          axios.post('https://optimalprice.stromsy.com/estimate-price', sendThisToDS)
-            .then( dsRes => {
-              console.log(dsRes.data);
-              const price = dsRes.data.price;
-              const listingQuoted = {
-                ...listing[0],
-                price
-              }
-              res.status(200).json({ message: `consumed ds-api to return a price quote`, resource: listingQuoted })
-            })
-            .catch( err => {
-              res.status(500).json({ message: `could not consume ds-api to return price quote` })
-              console.log(err);
-            })
+//2.4.20 - 1:15pm - pg .returning() does not allow .first() clause
+      listingFinders.countListingsByHostId(listing[0].host_id)
+        .then( ({ count }) => {
+          // plug count back into listings_count
+          hostFinders.findHostById(listing[0].host_id)
+          .then( host => {
+            host.listings_count = parseInt(count);
+            getPriceEst(listing, generatePayload(listing[0], host), res);
+          })
+          .catch( err => {
+            console.log(err);
+            res.status(500).json({ message: `internal server error` })
+          })
 
         })
         .catch( err => {
-          console.log(err);
-          res.status(500).json({ message: `internal server error` })
-        })
+          res.status(500).json({ message: `internal server error, could not get listings_count` })
+        })//count catch
     })
     .catch( err => {
       console.log(err);
       res.status(500).json({ error: `could not add listing` })
-    })
+    })//add listing catch
 })
 
-// edit a listing by id and payload
 router.put('/:listingId', (req, res) => {
-  const listingId = req.params.listingId;
-  listingDb.editListing(req.body, listingId)  
+  listingDb.editListing(req.body, req.params.listingId)  
     .then( listing => {
-      const listingsHostId = listing[0].host_id;
-      hostFinders.findHostById(listingsHostId)
-        .then( host => {
-          const sendThisToDS = generatePayload(listing[0], host);
-          console.log(sendThisToDS, 'ds object')
-          axios.post('https://optimalprice.stromsy.com/estimate-price', sendThisToDS)
-            .then( dsRes => {
-              console.log(dsRes.data);
-              const price = dsRes.data.price;
-              const listingQuoted = {
-                ...listing[0],
-                price
-              }
-              res.status(200).json({ message: `consumed ds-api to return a price quote`, resource: listingQuoted })
-            })
-            .catch( err => {
-              res.status(500).json({ message: `could not consume ds-api to return price quote` })
-              console.log(err);
-            })
+
+      listingFinders.countListingsByHostId(listing[0].host_id)
+        .then( ({ count }) => { 
+          host.listings_count = parseInt(count);
+          hostFinders.findHostById(listing[0].host_id)
+          .then( host => {
+            getPriceEst(listing, generatePayload(listing[0], host), res);
+          })
+          .catch( err => {
+            console.log(err);
+            res.status(500).json({ message: `internal server error, could not resolve editting host` })
+          })
+
         })
         .catch( err => {
           console.log(err);
-          res.status(500).json({ message: `internal server error, could not resolve editting host` })
-        })
-      // res.status(200).json({ message: `successfully editted listing`, resource: resou[0] })
+          res.status(500).json({ message: `internal server error, could not get listings_count` })
+        }) // count listings catch
+
+
     })
     .catch( err => {
       console.log(err);
       res.status(500).json({ error: `internal status error, could not edit listing` })
-    })
+    }) // listings edit catch
 });
 
-// remove a listing by id
 router.delete('/:listingId', (req, res) => {
-  const listingId = req.params.id;
-  listingDb.removeListing(listingId)
+  listingDb.removeListing(req.params.listingId)
     .then( resou => {
       res.status(200).json({ message: `removed listing`, resource: resou })
     })
@@ -138,3 +118,22 @@ function generatePayload(listing, host) {
     last_review_time: host.last_review_time ? host.last_review_time : undefined
   }
 }
+
+function getPriceEst(listing, sendThisToDS, res) {
+  console.log(sendThisToDS, 'ds object');
+  axios.post('https://optimalprice.stromsy.com/estimate-price', sendThisToDS)
+  .then( dsRes => {
+    const price = dsRes.data.price;
+    const listingQuoted = {
+      ...listing[0],
+      price
+    }
+    res.status(200).json({ message: `consumed ds-api to return a price quote`, resource: listingQuoted })
+  })
+  .catch( err => {
+    res.status(500).json({ message: `could not consume ds-api to return price quote` })
+    console.log(err);
+  })
+}
+
+// function recountListings()
