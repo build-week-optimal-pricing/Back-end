@@ -101,15 +101,15 @@ module.exports = router;
 function generatePayload(listing, host) {
   return {
     // listing data
-    neighborhood: listing.neighborhood,
-    bedrooms: listing.bedrooms,
-    room_type: listing.room_type,
-    bathrooms: listing.bathrooms,
-    beds: listing.beds,
-    availability: listing.availability,
-    deposit: parseInt(listing.deposit),
-    cleaning_fee: parseInt(listing.cleaning_fee),
-    min_nights: listing.min_nights,
+    neighborhood: listing.neighborhood ? listing.neighborhood : undefined,
+    bedrooms: listing.bedrooms ? listing.bedrooms : undefined,
+    room_type: listing.room_type ? listing.room_type : undefined,
+    bathrooms: listing.bathrooms ? listing.bathrooms : undefined,
+    beds: listing.beds ? listing.beds : undefined,
+    availability: listing.availability ? listing.availability : undefined,
+    deposit: listing.deposit ? listing.deposit : undefined,
+    cleaning_fee: listing.cleaning_fee ? listing.cleaning_fee: undefined,
+    min_nights: listing.min_nights ? listing.min_nights : undefined,
     // host data
     listings_count: host.listings_count ? host.listings_count : undefined,
     num_reviews: host.num_reviews ? host.num_reviews : undefined,
