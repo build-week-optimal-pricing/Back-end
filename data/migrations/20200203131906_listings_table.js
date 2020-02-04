@@ -2,19 +2,15 @@
 exports.up = function(knex) {
   return knex.schema.createTable('listings', table => {
     table.increments().unsigned();
+
     table.text('image');
+    table.text('street');
+    table.text('city');
+    table.text('state');
+    table.text('zip');
 
-    table.text('street')
-      .notNullable();
-
-    table.text('city')
-      .notNullable();
-
-    table.text('state')
-      .notNullable();
-
-    table.text('zip')
-      .notNullable();
+    table.text('room_type');
+    table.text('neighborhood');
 
     table.integer('bedrooms')
       .unsigned();
@@ -22,13 +18,14 @@ exports.up = function(knex) {
       .unsigned();
     table.integer('beds')
       .unsigned();
+    table.integer('availability')
+      .unsigned();
 
     table.decimal('deposit')
       .unsigned();
-    table.decimal('cleaningFee')
+    table.decimal('cleaning_fee')
       .unsigned();
-
-    table.integer('minNights')
+    table.integer('min_nights')
       .unsigned();
 
     //f key

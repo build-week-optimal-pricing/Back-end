@@ -26,13 +26,13 @@ router.get('/:hostId', (req, res) => {
       res.status(200).json({ message: `fetched listing by host id`, resource: resou })
     })
     .catch( err => {
+      console.log(err);
       res.status(500).json({ error: `internal server error, could not fetch host listings` })
     })
 })
 
 // add a listing
 router.post('/', ...listingMw.addListingMw, (req, res) => {
-// mw checks payload to be present and address filled in
   listingDb.addListing(req.body)
     .then( resou => {
       res.status(200).json({ message: `added a new listing`, resource: resou })

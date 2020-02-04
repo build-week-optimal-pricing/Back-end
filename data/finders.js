@@ -55,11 +55,11 @@ function findListings() {
 }
 
 function findListingById(id) {
-  return db('listing').where({ id }).first();
+  return db('listings').where({ id }).first();
 }
 
 function findListingsByHostId(hostId) {
-  return db('listing').where({ id }).first();
+  return db('listings').where({ host_id: hostId });
 }
 
 // can I build logic to find listing by hostname?

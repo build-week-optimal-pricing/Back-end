@@ -3,7 +3,8 @@ const router = require('express').Router();
 //db helpers
 const { hostControls } = require('../../data/routeHelpers/auth-model');
 //mw
-const { regHostMw } = require('../middleware/auth/reg-mw');
+const { regMw, profileMw } = require('../middleware/auth/');
+const { regHostMw } = regMw;
 
 router.post('/', ...regHostMw, (req, res) => {
 
@@ -14,7 +15,7 @@ router.post('/', ...regHostMw, (req, res) => {
 });
 
 router.delete('/:hostId', (req, res) => {
-  const hostId = parseInt(req.params.hostId);
+  const hostId = req.params.hostId;
   hostControls.removeHost(hostId)
     .then( resou => {
       console.log(resou, 'log of .removeHost resource resolving');
@@ -29,6 +30,19 @@ router.delete('/:hostId', (req, res) => {
       res.status(500).json({ error: `internal server error, could not delete host`})
     })
       
+})
+
+router.put('/:hostId', ...profileMw, (req, res) => {
+
+  const hostId = req.params.hostId;
+  hostControls.editHost(req.body, hostId)
+    .then( resou => {
+      console.log(resou)
+      res.status(200).json({ message: `host profile updated`, resource: resou[0] })
+    })
+    .catch( err => {
+      res.status(500).json({ message: `internal server error, could not update host profile` })
+    })
 })
 
 router.get('/', (req, res) => {
