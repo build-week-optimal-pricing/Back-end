@@ -2,9 +2,17 @@
 const router = require('express').Router();
 //db helpers
 const { hostControls } = require('../../data/routeHelpers/auth-model');
+const { hostFinders } = require('../../data/finders');
 //mw
 const { regMw, profileMw } = require('../middleware/auth/');
 const { regHostMw } = regMw;
+
+router.get('/', (req, res) => {
+  hostFinders.findHosts()
+    .then( resou => {
+      res.status(200).json({ message: `fetched hosts`, resource: resou })
+    })
+});
 
 router.post('/', ...regHostMw, (req, res) => {
 
@@ -44,9 +52,5 @@ router.put('/:hostId', ...profileMw, (req, res) => {
       res.status(500).json({ message: `internal server error, could not update host profile` })
     })
 })
-
-router.get('/', (req, res) => {
-  res.status(200).json({ serverConnect: `connected` });
-});
 
 module.exports = router;

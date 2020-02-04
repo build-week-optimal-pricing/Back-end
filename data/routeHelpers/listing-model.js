@@ -19,5 +19,5 @@ function removeListing(id) {
 }
 //edit listing
 function editListing(changes, id) {
-  return db('listing').where({ id }).update(changes);
+  return db('listings').where({ id }).update(changes).returning('*');
 }

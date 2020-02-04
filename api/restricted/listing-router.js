@@ -43,6 +43,19 @@ router.post('/', ...listingMw.addListingMw, (req, res) => {
     })
 })
 
+// edit a listing by id and payload
+router.put('/:listingId', (req, res) => {
+  const listingId = req.params.listingId;
+  listingDb.editListing(req.body, listingId)  
+    .then( resou => {
+      res.status(200).json({ message: `successfully editted listing`, resource: resou[0] })
+    })
+    .catch( err => {
+      console.log(err);
+      res.status(500).json({ error: `internal status error, could not edit listing` })
+    })
+});
+
 // remove a listing by id
 router.delete('/:listingId', (req, res) => {
   const listingId = req.params.id;
@@ -53,19 +66,6 @@ router.delete('/:listingId', (req, res) => {
     .catch( err => {
       console.log(err);
       res.status(500).json({ error: `internal server error, could not remove listing` })
-    })
-});
-
-// edit a listing by id and payload
-router.put('/:listingId', (req, res) => {
-  const listingId = req.params.id;
-  listingDb.editListing(req.body, listingId)  
-    .then( resou => {
-      res.status(200).json({ message: `successfully editted listing`, resource: resou })
-    })
-    .catch( err => {
-      console.log(err);
-      res.status(500).json({ error: `internal status error, could not edit listing` })
     })
 });
 
