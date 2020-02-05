@@ -45,18 +45,7 @@ router.post('/', ...listingMw.addListingMw, (req, res) => {
 
             const sendThisToDS = listingHelpers.generatePayload(listing[0], host);
             listingHelpers.getPriceEst(listing, sendThisToDS, res);
-            // axios.post('https://optimalprice.stromsy.com/estimate-price', sendThisToDS)
-            // .then( dsRes => {
-            //   const price = dsRes.data.price;
-            //   const listingQuoted = {
-            //     ...listing[0],
-            //     price
-            //   }
-            //   res.status(200).json({ message: `consumed ds-api to return a price quote`, resource: listingQuoted })
-            // })
-            // .catch( err => {
-            //   res.status(500).json({ message: `could not consume ds-api to return price quote` })
-            // })
+
           })
           .catch( err => {
             console.log(err);
