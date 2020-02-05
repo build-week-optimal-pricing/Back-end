@@ -32,6 +32,7 @@ router.get('/:hostId', (req, res) => {
 router.post('/', ...listingMw.addListingMw, (req, res) => {
   listingDb.addListing(req.body)
     .then( listing => {
+      console.log(listing);
 //2.4.20 - 1:15pm - pg .returning() does not allow .first() clause
       listingFinders.countListingsByHostId(listing[0].host_id)
         .then( ({ count }) => {
