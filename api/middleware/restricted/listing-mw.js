@@ -2,19 +2,30 @@
 
 const addListingMw = [
   listing__payloadExists,
+  //
   listing__hostIdPresent,
+  listing__room_typePresent,
+  listing__neighborhoodPresent,
+  listing__zipPresent,
+  //
   cleanData
 ]
 
 const getQuoteMw = [
   listing__payloadExists,
+  //
+  listing__hostIdPresent,
+  listing__room_typePresent,
+  listing__neighborhoodPresent,
+  listing__zipPresent,
+  //
   cleanData
 ]
 
 module.exports = {
   addListingMw,
   getQuoteMw,
-  listing__hostIdPresent
+  
 }
 
 //sanity
@@ -32,7 +43,31 @@ function listing__hostIdPresent(req, res, next) {
     next();
   } else {
     console.log(req.body.host_id, 'error');
-    res.status(400).json({ error: `missing required host_id` })
+    res.status(400).json({ error: `missing required host_id in payload body` })
+  }
+}
+
+function listing__room_typePresent(req, res, next) {
+  if(req.body.room_type) {
+    next();
+  } else {
+    res.status(400).json({ error: `missing required room_type in payload body` })
+  }
+}
+
+function listing__neighborhoodPresent(req, res, next) {
+  if(req.body.neighborhood) {
+    next();
+  } else {
+    res.status(400).json({ error: `missing required neighborhood in payload body` })
+  }
+}
+
+function listing__zipPresent(req, res, next) {
+  if(req.body.zip) {
+    next();
+  } else {
+    res.status(400).json({ error: `missing required zip in payload body` })
   }
 }
 
