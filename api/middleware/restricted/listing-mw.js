@@ -13,7 +13,8 @@ const getQuoteMw = [
 
 module.exports = {
   addListingMw,
-  getQuoteMw
+  getQuoteMw,
+  listing__hostIdPresent
 }
 
 //sanity
