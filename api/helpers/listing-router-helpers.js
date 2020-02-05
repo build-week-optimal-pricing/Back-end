@@ -3,7 +3,8 @@ const { editListing } = require('../../data/routeHelpers/listing-model');
 
 module.exports = {
   generatePayload,
-  getPriceEst
+  getPriceEst,
+  getPriceQuote
 }
 
 function generatePayload(listing, host) {
@@ -42,6 +43,24 @@ function getPriceEst(listing, sendThisToDS, res) {
         console.log(err);
         res.status(500).json({ message: `internal server error, failed to edit listing`})
       })
+
+  })
+  .catch( err => {
+    console.log(err);
+    res.status(500).json({ message: `could not consume ds-api to return price quote` })
+  })
+}
+
+function getPriceQuote(listing, sendThisToDS, res) {
+  axios.post('https://optimalprice.stromsy.com/estimate-price', sendThisToDS)
+  .then( dsRes => {
+    const price = dsRes.data.price;
+    const listingQuoted = {
+      ...listing,
+      price
+    }
+    console.log(listingQuoted);
+    res.status(200).json({ message: `retrieved price quote`, resource: listingQuoted })
 
   })
   .catch( err => {

@@ -25,6 +25,12 @@ describe('host registration test block', () => {
   })
 
   describe('POST /api/auth/registerHost', async () => {
+    it ('registers a host', async () => {
+      const res = await request(server)
+        .post('/api/auth/registerHost/')
+        .send({ username: 'hooitestaccount', password: 'hooipass' })
 
+      expect(res.status).toBe(201);
+    })
   })
 })

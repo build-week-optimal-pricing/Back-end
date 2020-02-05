@@ -75,6 +75,32 @@ router.post('/', ...listingMw.addListingMw, (req, res) => {
     })//add listing catch
 })
 
+router.post('/getQuote', ...listingMw.addListingMw, (req, res) => {
+  const listing = req.body;
+    listingFinders.countListingsByHostId(listing.host_id)
+      .then( ({ count }) => {
+        // plug count back into listings_count
+        hostFinders.findHostById(listing.host_id)
+        .then( host => {
+          console.log(listing, host, 'listing and host');
+          host.listings_count = parseInt(count);
+
+          const sendThisToDS = listingHelpers.generatePayload(listing, host);
+          listingHelpers.getPriceQuote(listing, sendThisToDS, res);
+
+        })
+        .catch( err => {
+          console.log(err);
+          res.status(500).json({ message: `internal server error` })
+        })
+
+      })
+      .catch( err => {
+        res.status(500).json({ message: `internal server error, could not get listings_count` })
+      })//count catch
+
+})
+
 router.put('/:listingId', (req, res) => {
   listingDb.editListing(req.body, req.params.listingId)  
     .then( listing => {
