@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { editListing } = require('../../data/routeHelpers/listing-model');
 
 module.exports = {
   generatePayload,
@@ -32,7 +33,16 @@ function getPriceEst(listing, sendThisToDS, res) {
       ...listing[0],
       price
     }
-    res.status(200).json({ message: `consumed ds-api to return a price quote`, resource: listingQuoted })
+    console.log(listingQuoted);
+    editListing(listingQuoted, listingQuoted.id)
+      .then( updatedListing => {
+        res.status(200).json({ message: `consumed ds-api to return a price quote`, resource: updatedListing })
+      })
+      .catch( err => {
+        console.log(err);
+        res.status(500).json({ message: `internal server error, failed to edit listing`})
+      })
+
   })
   .catch( err => {
     console.log(err);
