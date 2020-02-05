@@ -31,6 +31,18 @@ router.get('/:hostId', (req, res) => {
     })
 })
 
+router.get('/justOne/:listingId', (req, res) => {
+  listingFinders.findListingById(req.params.listingId)
+    .then( resou => {
+      console.log(resou);
+      res.status(200).json({ message: `fetched listing`, resource: resou})
+    })
+    .catch( err => {
+      console.log(err);
+      res.status(500).json({ message: `internal status error, could not fetch listing` })
+    })
+})
+
 router.post('/', ...listingMw.addListingMw, (req, res) => {
   
   listingDb.addListing(req.body)
