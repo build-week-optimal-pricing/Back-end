@@ -40,10 +40,7 @@ router.post('/', ...listingMw.addListingMw, (req, res) => {
           hostFinders.findHostById(listing[0].host_id)
           .then( host => {
             host.listings_count = parseInt(count);
-            console.log('basically what Im sending');
-            console.log(listing);
-            console.log(listingHelpers.generatePayload(listing[0], host));
-            console.log(res);
+
             listingHelpers.getPriceEst(listing, listingHelpers.generatePayload(listing[0], host), res);
           })
           .catch( err => {
