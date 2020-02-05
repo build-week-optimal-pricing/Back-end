@@ -38,25 +38,17 @@ function listing__payloadHasNecessaryProps(req, res, next) {
     !req.body.neighborhood ||
     !req.body.zip
   ) {
+
     const missingArr = [];
-
-    if(!req.body.host_id) {
-      missingArr.push('host_id');
-    }
-
-    if(!req.body.room_type) {
-      missingArr.push('room_type');
-    }
-
-    if(!req.body.neighborhood) {
-      missingArr.push('neighborhood');
-    }
-
-    if(!req.body.zip) {
-      missingArr.push('zip');
-    }
+    const necessities = ['host_id', 'room_type', 'neighborhood', 'zip'];
+    necessities.forEach(e => {
+      if(!req.body[e]) {
+        missingArr.push(e);
+      }
+    })
 
     res.status(400).json({ error: `missing required entities in payload body`, missing: missingArr })
+    
   } else {
     next();
   }
