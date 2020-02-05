@@ -3,10 +3,7 @@
 const addListingMw = [
   listing__payloadExists,
   //
-  listing__hostIdPresent,
-  listing__room_typePresent,
-  listing__neighborhoodPresent,
-  listing__zipPresent,
+  listing__payloadHasNecessaryProps,
   //
   cleanData
 ]
@@ -14,10 +11,7 @@ const addListingMw = [
 const getQuoteMw = [
   listing__payloadExists,
   //
-  listing__hostIdPresent,
-  listing__room_typePresent,
-  listing__neighborhoodPresent,
-  listing__zipPresent,
+  listing__payloadHasNecessaryProps,
   //
   cleanData
 ]
@@ -37,37 +31,34 @@ function listing__payloadExists(req, res, next) {
   }
 }
 
-function listing__hostIdPresent(req, res, next) {
-  if(req.body.host_id) {
-    console.log(req.body.host_id, 'next');
-    next();
-  } else {
-    console.log(req.body.host_id, 'error');
-    res.status(400).json({ error: `missing required host_id in payload body` })
-  }
-}
+function listing__payloadHasNecessaryProps(req, res, next) {
+  if(
+    !req.body.host_id || 
+    !req.body.room_type ||
+    !req.body.neighborhood ||
+    !req.body.zip
+  ) {
+    const missingArr = [];
 
-function listing__room_typePresent(req, res, next) {
-  if(req.body.room_type) {
-    next();
-  } else {
-    res.status(400).json({ error: `missing required room_type in payload body` })
-  }
-}
+    if(!req.body.host_id) {
+      missingArr.push('host_id');
+    }
 
-function listing__neighborhoodPresent(req, res, next) {
-  if(req.body.neighborhood) {
-    next();
-  } else {
-    res.status(400).json({ error: `missing required neighborhood in payload body` })
-  }
-}
+    if(!req.body.room_type) {
+      missingArr.push('room_type');
+    }
 
-function listing__zipPresent(req, res, next) {
-  if(req.body.zip) {
-    next();
+    if(!req.body.neighborhood) {
+      missingArr.push('neighborhood');
+    }
+
+    if(!req.body.zip) {
+      missingArr.push('zip');
+    }
+
+    res.status(400).json({ error: `missing required entities in payload body`, missing: missingArr })
   } else {
-    res.status(400).json({ error: `missing required zip in payload body` })
+    next();
   }
 }
 
