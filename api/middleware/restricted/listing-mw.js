@@ -24,7 +24,7 @@ module.exports = {
 
 //sanity
 function listing__payloadExists(req, res, next) {
-  if(req.body) {
+  if(Object.getOwnPropertyNames(req.body).length) {
     next();
   } else {
     res.status(400).json({ error: `endpoint requires payload` })
@@ -38,17 +38,13 @@ function listing__payloadHasNecessaryProps(req, res, next) {
     !req.body.neighborhood ||
     !req.body.zip
   ) {
-
-    const missingArr = [];
-    const necessities = ['host_id', 'room_type', 'neighborhood', 'zip'];
-    necessities.forEach(e => {
-      if(!req.body[e]) {
-        missingArr.push(e);
-      }
+      const necessities = ['host_id', 'room_type', 'neighborhood', 'zip'];
+      const missingArr = necessities.filter(e => {
+        return !req.body[e];
     })
 
     res.status(400).json({ error: `missing required entities in payload body`, missing: missingArr })
-    
+
   } else {
     next();
   }
