@@ -36,7 +36,7 @@ function getPriceEst(listing, sendThisToDS, res) {
     console.log(listingQuoted);
     editListing(listingQuoted, listingQuoted.id)
       .then( updatedListing => {
-        res.status(200).json({ message: `consumed ds-api to return a price quote`, resource: updatedListing })
+        res.status(200).json({ message: `consumed ds-api to return a price quote`, resource: updatedListing[0] })
       })
       .catch( err => {
         console.log(err);
