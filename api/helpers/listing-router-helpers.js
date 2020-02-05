@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { editListing } = require('../../data/routeHelpers/listing-model');
 
 module.exports = {
   generatePayload,
@@ -25,7 +26,6 @@ function generatePayload(listing, host) {
 }
 
 function getPriceEst(listing, sendThisToDS, res) {
-  console.log(sendThisToDS, 'ds object');
   axios.post('https://optimalprice.stromsy.com/estimate-price', sendThisToDS)
   .then( dsRes => {
     const price = dsRes.data.price;
@@ -33,10 +33,19 @@ function getPriceEst(listing, sendThisToDS, res) {
       ...listing[0],
       price
     }
-    res.status(200).json({ message: `consumed ds-api to return a price quote`, resource: listingQuoted })
+    console.log(listingQuoted);
+    editListing(listingQuoted, listingQuoted.id)
+      .then( updatedListing => {
+        res.status(200).json({ message: `consumed ds-api to return a price quote`, resource: updatedListing[0] })
+      })
+      .catch( err => {
+        console.log(err);
+        res.status(500).json({ message: `internal server error, failed to edit listing`})
+      })
+
   })
   .catch( err => {
-    res.status(500).json({ message: `could not consume ds-api to return price quote` })
     console.log(err);
+    res.status(500).json({ message: `could not consume ds-api to return price quote` })
   })
 }

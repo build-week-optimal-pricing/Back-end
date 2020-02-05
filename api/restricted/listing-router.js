@@ -7,6 +7,8 @@ const listingDb = require('../../data/routeHelpers/listing-model');
 const { listingMw } = require('../middleware/restricted');
 //helpers
 const { listingHelpers } = require('../helpers')
+//axios
+const axios = require('axios');
 
 router.get('/', (req, res) => {
   listingFinders.findListings()
@@ -30,6 +32,7 @@ router.get('/:hostId', (req, res) => {
 })
 
 router.post('/', ...listingMw.addListingMw, (req, res) => {
+  
   listingDb.addListing(req.body)
     .then( listing => {
 //2.4.20 - 1:15pm - pg .returning() does not allow .first() clause
@@ -39,7 +42,10 @@ router.post('/', ...listingMw.addListingMw, (req, res) => {
           hostFinders.findHostById(listing[0].host_id)
           .then( host => {
             host.listings_count = parseInt(count);
-            listingHelpers.getPriceEst(listing, listingHelpers.generatePayload(listing[0], host), res);
+
+            const sendThisToDS = listingHelpers.generatePayload(listing[0], host);
+            listingHelpers.getPriceEst(listing, sendThisToDS, res);
+
           })
           .catch( err => {
             console.log(err);
@@ -60,14 +66,15 @@ router.post('/', ...listingMw.addListingMw, (req, res) => {
 router.put('/:listingId', (req, res) => {
   listingDb.editListing(req.body, req.params.listingId)  
     .then( listing => {
-
       listingFinders.countListingsByHostId(listing[0].host_id)
         .then( ({ count }) => {
-          host.listings_count = parseInt(count);
+          
 
           hostFinders.findHostById(listing[0].host_id)
           .then( host => {
+            host.listings_count = parseInt(count);
             listingHelpers.getPriceEst(listing, listingHelpers.generatePayload(listing[0], host), res);
+
           })
           .catch( err => {
             console.log(err);

@@ -15,7 +15,6 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', ...regHostMw, (req, res) => {
-  req.body.listings_count = 0;
   hostControls.addHost(req.body)
     .then( resou => {
       res.status(201).json({ message: `added new host`, resource: resou[0] })

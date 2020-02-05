@@ -1,5 +1,4 @@
 const db = require('../dbConfig');
-const { listingFinders } = require('../finders');
 
 module.exports = {
   addListing, //addListing(listing)
