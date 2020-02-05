@@ -44,7 +44,7 @@ function cleanData(req, res, next) {
 
   req.body.deposit = req.body.deposit ? parseFloat(req.body.deposit) : undefined;
   req.body.cleaning_fee = req.body.cleaning_fee ? parseFloat(req.body.cleaning_fee) : undefined;
-  req.body.host_id = req.body.host_id ? parseFloat(req.body.host_id) : undefined;
+  req.body.host_id = req.body.host_id ? parseInt(req.body.host_id) : undefined;
 
   next();
 }
