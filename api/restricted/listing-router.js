@@ -75,7 +75,7 @@ router.post('/', ...listingMw.addListingMw, (req, res) => {
     })//add listing catch
 })
 
-router.post('/getQuote', ...listingMw.addListingMw, (req, res) => {
+router.post('/getQuote', ...listingMw.getQuoteMw, (req, res) => {
   const listing = req.body;
     listingFinders.countListingsByHostId(listing.host_id)
       .then( ({ count }) => {

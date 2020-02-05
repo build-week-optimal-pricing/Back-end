@@ -6,8 +6,14 @@ const addListingMw = [
   cleanData
 ]
 
+const getQuoteMw = [
+  listing__payloadExists,
+  cleanData
+]
+
 module.exports = {
-  addListingMw
+  addListingMw,
+  getQuoteMw
 }
 
 //sanity
