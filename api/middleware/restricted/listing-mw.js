@@ -2,7 +2,6 @@
 
 const addListingMw = [
   listing__payloadExists,
-  // listing__addressPresent,
   listing__hostIdPresent,
   cleanData
 ]
@@ -22,8 +21,10 @@ function listing__payloadExists(req, res, next) {
 
 function listing__hostIdPresent(req, res, next) {
   if(req.body.host_id) {
+    console.log(req.body.host_id, 'next');
     next();
   } else {
+    console.log(req.body.host_id, 'error');
     res.status(400).json({ error: `missing required host_id` })
   }
 }

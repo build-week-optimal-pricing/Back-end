@@ -25,7 +25,6 @@ function generatePayload(listing, host) {
 }
 
 function getPriceEst(listing, sendThisToDS, res) {
-  console.log(sendThisToDS, 'ds object');
   axios.post('https://optimalprice.stromsy.com/estimate-price', sendThisToDS)
   .then( dsRes => {
     const price = dsRes.data.price;
