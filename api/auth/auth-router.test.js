@@ -1,7 +1,7 @@
 const server = require('../serverBuild');
 const request = require('supertest');
 
-describe('auth-router test block', () => {
+describe.skip('auth-router test block', () => {
   it ('is connected to server', async () => {
     const res = await request(server).get('/api/auth');
 

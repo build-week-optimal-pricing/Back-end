@@ -1,10 +1,18 @@
 require('dotenv').config();
 
 const db = () => {
-  if(process.env.DATABASE_URL) {
-    return require('knex')(require('../knexfile.js').production)
-  } else {
-    return require('knex')(require('../knexfile.js').development)
+  switch(process.env.DB_ENV) {
+    case 'development':
+      return require('knex')(require('../knexfile.js').development)
+
+    case 'production':
+      return require('knex')(require('../knexfile.js').production)
+
+    case 'testing':
+      return require('knex')(require('../knexfile.js').testing)
+
+    default:
+      return require('knex')(require('../knexfile.js').development)
   }
 }
 

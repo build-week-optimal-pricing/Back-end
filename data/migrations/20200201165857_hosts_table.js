@@ -10,6 +10,14 @@ exports.up = function(knex) {
 
     table.string('password', 60)
       .notNullable();
+
+    table.text('image');
+    
+    table.text('name');
+
+    table.text('phone');
+
+    table.text('email');
       
   })
 };

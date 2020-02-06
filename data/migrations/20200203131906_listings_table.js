@@ -36,6 +36,7 @@ exports.up = function(knex) {
       .references('id')
       .inTable('hosts')
       .onDelete('CASCADE')
+      .onUpdate('CASCADE');
       
   })
 };

@@ -5,7 +5,6 @@ module.exports = restricted;
 
 function restricted(req, res, next) {
   if(req.headers && req.headers.authorization) {
-    console.log('within restricted mw');
     const tokenValidity = jwt.verify(req.headers.authorization, process.env.JWT_SECRET);
 
     tokenValidity

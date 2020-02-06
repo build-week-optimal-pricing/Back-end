@@ -34,7 +34,6 @@ function getPriceEst(listing, sendThisToDS, res) {
       ...listing[0],
       price
     }
-    console.log(listingQuoted);
     editListing(listingQuoted, listingQuoted.id)
       .then( updatedListing => {
         res.status(200).json({ message: `consumed ds-api to return a price quote`, resource: updatedListing[0] })
@@ -46,7 +45,7 @@ function getPriceEst(listing, sendThisToDS, res) {
 
   })
   .catch( err => {
-    console.log(err);
+    // console.log(err);
     res.status(500).json({ message: `could not consume ds-api to return price quote` })
   })
 }

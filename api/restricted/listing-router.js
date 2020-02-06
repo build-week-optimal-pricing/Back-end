@@ -44,30 +44,38 @@ router.get('/justOne/:listingId', (req, res) => {
 })
 
 router.post('/', ...listingMw.addListingMw, (req, res) => {
-  
   listingDb.addListing(req.body)
     .then( listing => {
-//2.4.20 - 1:15pm - pg .returning() does not allow .first() clause
-      listingFinders.countListingsByHostId(listing[0].host_id)
-        .then( ({ count }) => {
-          // plug count back into listings_count
-          hostFinders.findHostById(listing[0].host_id)
-          .then( host => {
-            host.listings_count = parseInt(count);
+      hostFinders.findHostById(listing[0].host_id)
+        .then( host => {
 
-            const sendThisToDS = listingHelpers.generatePayload(listing[0], host);
-            listingHelpers.getPriceEst(listing, sendThisToDS, res);
-
-          })
-          .catch( err => {
-            console.log(err);
-            res.status(500).json({ message: `internal server error` })
-          })
-
+          listingFinders.countListingsByHostId(listing[0].host_id)
+            .then( ({ count }) => {
+              host = {
+                ...host,
+                listings_count: parseInt(count)
+              }
+              const sendThisToDS = listingHelpers.generatePayload(listing[0], host);
+              listingHelpers.getPriceEst(listing, sendThisToDS, res);
+              // old code below : refer to it if things break
+              // if(count) {
+              //   host.listings_count = parseInt(count);
+              //   const sendThisToDS = listingHelpers.generatePayload(listing[0], host);
+              //   listingHelpers.getPriceEst(listing, sendThisToDS, res);
+              // } else {
+              //   const sendThisToDS = listingHelpers.generatePayload(listing[0], host);
+              //   listingHelpers.getPriceEst(listing, sendThisToDS, res);
+              // }
+            })
+            .catch( err => {
+              res.status(500).json({ message: `internal server error, could not get listings_count` })
+            })
         })
-        .catch( err => {
-          res.status(500).json({ message: `internal server error, could not get listings_count` })
-        })//count catch
+      .catch( err => {
+        console.log(err);
+        res.status(500).json({ message: `internal server error` })
+      })
+
     })
     .catch( err => {
       console.log(err);
@@ -82,7 +90,6 @@ router.post('/getQuote', ...listingMw.getQuoteMw, (req, res) => {
         // plug count back into listings_count
         hostFinders.findHostById(listing.host_id)
         .then( host => {
-          console.log(listing, host, 'listing and host');
           host.listings_count = parseInt(count);
 
           const sendThisToDS = listingHelpers.generatePayload(listing, host);
