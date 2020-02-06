@@ -107,7 +107,6 @@ router.put('/:listingId', (req, res) => {
       listingFinders.countListingsByHostId(listing[0].host_id)
         .then( ({ count }) => {
           
-
           hostFinders.findHostById(listing[0].host_id)
           .then( host => {
             host.listings_count = parseInt(count);
