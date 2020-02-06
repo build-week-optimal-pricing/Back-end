@@ -25,7 +25,7 @@ router.post('/', loginMw, (req, res) => {
     username: req.body.username,
     id: req.body.id
   }
-  res.status(200).json({ message: `logged in with ${req.isHost ? 'host' : 'admin'} priveleges`, token: req.host_token, resource: resou })
+  res.status(200).json({ message: `logged in with ${req.isHost ? 'host' : 'admin'} priveleges`, token: token, resource: resou })
 })
 
 // write middleware that performs necessary checks before refreshing jwt
