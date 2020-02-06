@@ -41,7 +41,7 @@ const options = {
 
 const token = jwt.sign(payload, secret, options);
 
-describe.skip('host router test block', () => {
+describe('host router test block', () => {
   it ('tests sanely', () => {
     expect(true).toBe(true);
   })

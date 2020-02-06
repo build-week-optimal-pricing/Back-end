@@ -6,7 +6,7 @@ const db = require('../../data/dbConfig');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-describe.skip('login router test block', () => {
+describe('login router test block', () => {
   const user = {
     username: 'hooitestacc',
     password: 'hooitestpw'

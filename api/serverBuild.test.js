@@ -1,7 +1,7 @@
 const server = require('./serverBuild');
 const request = require('supertest');
 
-describe.skip('server', () => {
+describe('server', () => {
   it ('tests sanely', () => {
     expect(true).toBe(true);
   })

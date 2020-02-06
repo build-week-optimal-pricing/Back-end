@@ -4,7 +4,7 @@ const request = require('supertest');
 //db
 const db = require('../../data/dbConfig');
 
-describe.skip('host registration test block', () => {
+describe('host registration test block', () => {
 
   function cleanUp() {
     return db('listings').del()
