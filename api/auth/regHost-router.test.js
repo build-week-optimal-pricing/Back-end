@@ -5,16 +5,21 @@ const request = require('supertest');
 const db = require('../../data/dbConfig');
 
 describe('host registration test block', () => {
-// I only need to test post request here actually. 
+
+  function cleanUp() {
+    return db('listings').del()
+      .then(rr => {
+        return db('hosts').del();
+      })
+  }
+
   beforeAll(() => {
-    return db('hosts').del();
+    return cleanUp();
   })
 
   afterAll(() => {
-    return db('hosts').del();
+    return cleanUp();
   })
-  // I delete all host records before so that the tests start in a clean slate
-  // I delete all host records after so that proceeding tests start in a clean slate clean
 
   it ('connects to server', async () => {
     const res = await request(server).get('/api/auth/registerHost/');
@@ -26,11 +31,16 @@ describe('host registration test block', () => {
 
   describe('POST /api/auth/registerHost', async () => {
     it ('registers a host', async () => {
+
       const res = await request(server)
         .post('/api/auth/registerHost/')
+        .set('Content-Type', 'application/json')
         .send({ username: 'hooitestaccount', password: 'hooipass' })
 
       expect(res.status).toBe(201);
+      expect(res.type).toMatch(/json/i);
+      expect(res.body.message).toBe('added new host');
+      expect(res.body.resource.username).toEqual('hooitestaccount');
     })
   })
 })

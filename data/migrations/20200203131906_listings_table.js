@@ -34,8 +34,9 @@ exports.up = function(knex) {
       .unsigned()
       .notNullable()
       .references('id')
-      .inTable('hosts');
-
+      .inTable('hosts')
+      .onDelete('CASCADE')
+      
   })
 };
 

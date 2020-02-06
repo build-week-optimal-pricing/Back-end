@@ -59,7 +59,6 @@ function getPriceQuote(listing, sendThisToDS, res) {
       ...listing,
       price
     }
-    console.log(listingQuoted);
     res.status(200).json({ message: `retrieved price quote`, resource: listingQuoted })
 
   })

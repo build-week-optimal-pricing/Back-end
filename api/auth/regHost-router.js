@@ -19,6 +19,10 @@ router.post('/', ...regHostMw, (req, res) => {
     .then( resou => {
       res.status(201).json({ message: `added new host`, resource: resou[0] })
     })
+    .catch( err => {
+      console.log(err);
+      res.status(500).json({ message: `internal status error, could not register host` })
+    })
 });
 
 router.delete('/:hostId', (req, res) => {

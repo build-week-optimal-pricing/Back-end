@@ -35,10 +35,9 @@ function listing__payloadHasNecessaryProps(req, res, next) {
   if(
     !req.body.host_id || 
     !req.body.room_type ||
-    !req.body.neighborhood ||
-    !req.body.zip
+    !req.body.neighborhood 
   ) {
-      const necessities = ['host_id', 'room_type', 'neighborhood', 'zip'];
+      const necessities = ['host_id', 'room_type', 'neighborhood'];
       const missingArr = necessities.filter(e => {
         return !req.body[e];
     })
