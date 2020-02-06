@@ -3,8 +3,10 @@ const router = require('express').Router();
 //db
 const { hostFinders } = require('../../data/finders');
 const hostDb = require('../../data/routeHelpers/host-model');
+//mw
+const { put_profileMw, del_profileMw, get_profileMw } = require('../middleware/restricted/').hostMw;
 //change jwt payload to include id of logged in host
-router.get('/:hostId', (req, res) => {
+router.get('/:hostId', ...get_profileMw, (req, res) => {
   //check if hostId is legit
   hostFinders.findHostById(req.params.hostId)
     .then( resou => {
@@ -21,12 +23,12 @@ router.get('/:hostId', (req, res) => {
     })
 })
 
-router.put('/:hostId', (req, res) => { 
+router.put('/:hostId', ...put_profileMw, (req, res) => { 
   //check if hostId is legit
   //check if 
   hostDb.editHost(req.body, req.params.hostId)
     .then( resou => {
-      res.status(200).json({ message: `host successfully editted`, resource: resou })
+      res.status(200).json({ message: `host successfully editted`, resource: resou[0] })
     })
     .catch( err => {
       console.log(err);
@@ -34,7 +36,7 @@ router.put('/:hostId', (req, res) => {
     })
 })
 
-router.delete('/:hostId', (req, res) => {
+router.delete('/:hostId', ...del_profileMw, (req, res) => {
   //check if hostId is legit
   hostDb.removeHost(req.params.hostId)
     .then( resou => {
