@@ -11,7 +11,7 @@ const loginMw = [
 module.exports = loginMw;
 
 function login__bodyExists(req, res, next) {
-  console.log('login__bodyExists');
+
   req.body
     ?
       next()
@@ -21,7 +21,7 @@ function login__bodyExists(req, res, next) {
 }
 
 function login__credsExist(req, res, next) {
-  console.log('login__credsExist');
+
   req.body.username && req.body.password
     ?
       next()
@@ -30,7 +30,7 @@ function login__credsExist(req, res, next) {
 }
 
 async function log__userRecordExists(req, res, next) {
-  console.log('log__userRecordExists');
+
   const hostUser = await hostFinders.findHostByUsername(req.body.username);
   const adminUser = await adminFinders.findAdminByUsername(req.body.username);
   
@@ -52,12 +52,12 @@ async function log__userRecordExists(req, res, next) {
 }
 
 function log__verifyPass(req, res, next) {
-  console.log('log__verifyPass');
+
   req.isHost
     ?
       hostFinders.findHostByUsername(req.body.username)
         .then( host => {
-          console.log(host, 'in mw');
+
           if(bcryptjs.compareSync(req.body.password, host.password)) {
             req.body.id = host.id;
             next();

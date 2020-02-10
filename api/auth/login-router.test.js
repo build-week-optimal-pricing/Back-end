@@ -41,6 +41,7 @@ describe('login router test block', () => {
 
     const payload = {
       username: 'hooitestacc',
+      id: res.body.resource.id,
       priveleges: 'host'
     }
     const options = {

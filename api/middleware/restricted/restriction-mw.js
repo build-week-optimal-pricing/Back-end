@@ -7,8 +7,10 @@ function restricted(req, res, next) {
   if(req.headers && req.headers.authorization) {
     const tokenValidity = jwt.verify(req.headers.authorization, process.env.JWT_SECRET);
 
-    tokenValidity
-      ?
+    req.tokenHostId = tokenValidity.id;
+
+    Object.keys(tokenValidity).length
+      ?  
         next()
       :
         res.status(401).json({ error: `token provided by client was invalid` })

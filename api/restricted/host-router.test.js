@@ -3,43 +3,36 @@ require('dotenv').config();
 const server = require('../serverBuild');
 const request = require('supertest');
 const db = require('../../data/dbConfig');
-//auth
-const jwt = require('jsonwebtoken');
 
 let hostId;
+let token;
 beforeEach(async () => {
-  await db('hosts').del();
-  await db('listings').del();
-  // in order to test .post, I need to retrieve the hostId, which is a property returned from registering
-  // however I can't seem to register because my cleaners aren't killing hosts
-  const reg_res = await request(server).post('/api/auth/registerHost')
-  .set('Content-Type', 'application/json')
-  .send({ username: 'hooi', password: 'host' })
-
-  if(reg_res.body && reg_res.body.resource) {
-    hostId = reg_res.body.resource.id
-  } else {
-    console.log(reg_res.body, 'reg_res');
-  }
-  return;
+  await db('hosts').del()
+    .then(async deleteHosts => {
+      await request(server).post('/api/auth/registerHost')
+      .set('Content-Type', 'application/json')
+      .send({ username: 'hooi', password: 'host' })
+        .then(async reg_res => {
+          hostId = reg_res.body.resource.id;
+          await request(server).post('/api/auth/login')
+            .set('Accept', 'application/json')
+            .send({
+              username: 'hooi',
+              password: 'host'
+            })
+              .then(log_res => {
+                token = log_res.body.token;
+                return;
+              })
+        })
+    })
+  
 })
 
 afterEach(async () => {
   await db('hosts').del();
   await db('listings').del();
 })
-
-const payload = {
-  username: 'hooi',
-  priveleges: 'host'
-}
-const secret = process.env.JWT_SECRET;
-
-const options = {
-  expiresIn: 1000 * 60 * 60 //tokens last for 60 minutes
-}
-
-const token = jwt.sign(payload, secret, options);
 
 describe('host router test block', () => {
   it ('tests sanely', () => {
@@ -51,8 +44,6 @@ describe('host router test block', () => {
       const res = await request(server).get(`/api/restricted/hosts/${hostId}`)
         .set('Content-Type', 'application/json')
         .set('authorization', token)
-
-      console.log(hostId, res.body.resource.id, 'the two ids');
 
       expect(res.status).toBe(200);
       expect(res.type).toMatch(/json/i);

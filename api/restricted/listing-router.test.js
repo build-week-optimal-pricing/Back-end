@@ -7,46 +7,44 @@ require('dotenv').config();
 //build test server
 const server = require('../serverBuild');
 const request = require('supertest');
-//jwt
-const jwt = require('jsonwebtoken');
 //db
 const db = require('../../data/dbConfig');
 
 describe('listing-router test block', () => {
 
+// let listingId;
 let hostId;
+let token;
 beforeEach(async () => {
-  await db('hosts').del();
-  await db('listings').del();
+  await db('hosts').del()
 
-  const reg_res = await request(server).post('/api/auth/registerHost')
-  .set('Content-Type', 'application/json')
-  .send({ username: 'hooi', password: 'host' })
+    .then( deleteHosts => {
+      return request(server).post('/api/auth/registerHost')
+      .set('Content-Type', 'application/json')
+      .send({ username: 'hooi', password: 'host' })
 
-  if(reg_res.body && reg_res.body.resource) {
-    hostId = reg_res.body.resource.id
-  } else {
-    console.log(reg_res.body, 'reg_res');
-  }
-  return;
+        .then( reg_res => {
+          hostId = reg_res.body.resource.id;
+          return request(server).post('/api/auth/login')
+            .set('Accept', 'application/json')
+            .send({
+              username: 'hooi',
+              password: 'host'
+            })
+
+              .then( log_res => {
+                token = log_res.body.token;
+                return;
+              })
+        })
+    })
+  
 })
 
 afterEach(async () => {
   await db('hosts').del();
   await db('listings').del();
 })
-
-const payload = {
-  username: 'hooi',
-  priveleges: 'host'
-}
-const secret = process.env.JWT_SECRET;
-
-const options = {
-  expiresIn: 1000 * 60 * 60 //tokens last for 60 minutes
-}
-
-const token = jwt.sign(payload, secret, options);
 
   describe('GET /api/restricted/listings/:hostId', () => {
     it ('receives get requests', async () => {
@@ -58,55 +56,6 @@ const token = jwt.sign(payload, secret, options);
       expect(res.status).toBe(200);
       expect(res.type).toMatch(/json/i);
       expect(res.body.message).toBe('fetched listing by host id');
-    })
-  })
-
-  describe('POST /api/restricted/listings', () => {
-    it('can add a new listing', async () => {
-      const res = await request(server).post('/api/restricted/listings')
-        .set('Accept', 'application/json')
-        .set('authorization', token)
-        .send({
-          "host_id": hostId,
-          "room_type": "Private room",
-          "neighborhood": "Reinickendorf"
-        })
-
-      expect(res.status).toBe(200);
-      expect(res.body.resource.host_id).toEqual(hostId);
-
-    })
-  })
-
-  describe('DELETE /api/restricted/listings/:listingId', () => {
-    it('can delete a listing', async () => {
-      // const post = await request(server).post('/api/restricted/listings')
-      //   .set('Accept', 'application/json')
-      //   .set('authorization', token)
-      //   .send({
-      //     "host_id": hostId,
-      //     "room_type": "Private room",
-      //     "neighborhood": "Reinickendorf"
-      //   })
-      // const listingId = post.body.resource.id;
-      let ids
-      await db('listings').insert({
-        "host_id": hostId,
-        "room_type": "Private room",
-        "neighborhood": "Reinickendorf"
-      }).then( res => {
-        ids = res[0];
-      })
-
-      console.log(ids);
-
-      // const res = await request(server).delete(`/api/restricted/listings/${parseInt(ids[0])}`)
-      //   .set('Accept', 'application/json')
-      //   .set('authorization', token)
-
-      // expect(res.status).toBe(200);
-      // expect(res.body.resource).toBe(1);
-
     })
   })
 
@@ -126,4 +75,98 @@ const token = jwt.sign(payload, secret, options);
 
     })
   })
+
+  describe('POST /api/restricted/listings', () => {
+    it('can add a new listing', async () => {
+
+      const res = await request(server).post('/api/restricted/listings')
+        .set('Accept', 'application/json')
+        .set('authorization', token)
+        .send({
+          "host_id": hostId,
+          "neighborhood": "Reinickendorf",
+          "bedrooms": 1,
+          "bathrooms": 1,
+          "beds": 1,
+          "deposit": "0.08",
+          "cleaning_fee": "0.08",
+          "min_nights": "8",
+          "room_type": "Private room"
+        })
+
+      expect(res.status).toBe(200);
+      expect(res.body.resource.host_id).toEqual(hostId);
+
+    }, 30000)
+  })
+
+
+
+  describe('DELETE /api/restricted/listings/:listingId', () => { 
+
+    it('can delete a listing', async () => {
+      let listingId;
+
+      await request(server).post('/api/restricted/listings')
+        .set('Accept', 'application/json')
+        .set('authorization', token)
+        .send({
+          "host_id": hostId,
+          "room_type": "Private room",
+          "neighborhood": "Reinickendorf"
+        })
+          .then(async post_res => {
+            listingId = await post_res.body.resource.id;
+            return;
+          })
+
+      const res = await request(server).delete(`/api/restricted/listings/${listingId}`)
+      .set('Accept', 'application/json')
+      .set('authorization', token)
+
+      expect(res.status).toBe(200);
+      expect(res.body.resource).toBe(1);
+
+    })
+  })
+
+  describe('PUT /api/restricted/listings/:listingId', () => { 
+
+    it('can edit a listing', async () => {
+      let listingId;
+
+      await request(server).post('/api/restricted/listings')
+        .set('Accept', 'application/json')
+        .set('authorization', token)
+        .send({
+          "host_id": hostId,
+          "room_type": "Private room",
+          "neighborhood": "Reinickendorf"
+        })
+          .then(async post_res => {
+            listingId = await post_res.body.resource.id;
+            return;
+          })
+
+      const res = await request(server).put(`/api/restricted/listings/${listingId}`)
+      .set('Accept', 'application/json')
+      .set('authorization', token)
+      .send({
+        "host_id": hostId,
+        "neighborhood": "Reinickendorf",
+        "bedrooms": 50,
+        "bathrooms": 50,
+        "beds": 100,
+        "deposit": "0.08",
+        "cleaning_fee": "0.08",
+        "min_nights": "8",
+        "room_type": "Private room"
+      })
+
+      expect(res.status).toBe(200);
+      expect(res.body.message).toBe('consumed ds-api to return a price quote');
+
+    })
+  })
+
 })

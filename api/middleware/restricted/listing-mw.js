@@ -1,11 +1,19 @@
-
-
-const addListingMw = [
+const putListingMw = [//add host_id check in payload body
   listing__payloadExists,
+  checkHostId_InPayload,
+  //
+  cleanData
+]
+
+const addListingMw = [//add host_id check in payload body
+  listing__payloadExists,
+  //
+  checkHostId_InPayload,
+  cleanData,
   //
   listing__payloadHasNecessaryProps,
   //
-  cleanData
+  
 ]
 
 const getQuoteMw = [
@@ -19,7 +27,8 @@ const getQuoteMw = [
 module.exports = {
   addListingMw,
   getQuoteMw,
-  
+  putListingMw,
+
 }
 
 //sanity
@@ -29,6 +38,21 @@ function listing__payloadExists(req, res, next) {
   } else {
     res.status(400).json({ error: `endpoint requires payload` })
   }
+}
+
+function checkHostId_InPayload(req, res, next) {
+
+  req.body.host_id 
+    ?
+      (() => {
+        if(req.tokenHostId == req.body.host_id) {
+          next()
+        } else {
+          res.status(401).json({ message: `host_id given in payload does not match authorization` })
+        }
+      })()
+    :
+      res.status(400).json({ message: `host_id credentials missing in payload` })
 }
 
 function listing__payloadHasNecessaryProps(req, res, next) {
