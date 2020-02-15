@@ -5,9 +5,11 @@ const responseDocs = require('./docs/api-docs.js');
 //routes
 const authRouter = require('./auth/auth-router.js');
 const restrictedRouter = require('./restricted/restricted-router');
+//mw
+const { restricted } = require('./middleware/restricted')
 
 router.use('/auth', authRouter);
-router.use('/restricted', restrictedRouter);
+router.use('/restricted', restricted, restrictedRouter);
 
 router.get('/docs', (req, res) => {
   res.status(200).send(responseDocs);

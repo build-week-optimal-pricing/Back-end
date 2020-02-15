@@ -57,7 +57,9 @@ function log__verifyPass(req, res, next) {
     ?
       hostFinders.findHostByUsername(req.body.username)
         .then( host => {
+          console.log(host, 'in mw');
           if(bcryptjs.compareSync(req.body.password, host.password)) {
+            req.body.id = host.id;
             next();
           } else {
             res.status(401).json({ error: `invalid host password`})
@@ -66,7 +68,9 @@ function log__verifyPass(req, res, next) {
     :
       adminFinders.findAdminByUsername(req.body.username)
         .then( admin => {
+          console.log(admin, 'in mw');
           if(bcryptjs.compareSync(req.body.password, admin.password)) {
+            req.body.id = admin.id;
             next();
           } else {
             res.status(401).json({ error: `invalid admin password` });
