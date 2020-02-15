@@ -1,5 +1,5 @@
 ### AirPrice
-Deployed Link : 
+Deployed Link : https://fast-scrubland-91418.herokuapp.com
 
 AirPrice is a tool that airbnb hosts in Berlin can use to determine the optimal price for their rental. 
 
