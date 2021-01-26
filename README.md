@@ -1,9 +1,9 @@
 <h2>AirPrice</h2>
-<ins>Deployed Landing Page:</ins> <b>https://rg-optimalpricer.netlify.com/index.html</b>
-<ins>Deployed Client:</ins> <b>https://airprice.now.sh/</b>
-<ins>Backend Deploy:</ins> <b>https://price-op.herokuapp.com/</b>
+<ins>Deployed Landing Page:</ins> <b>https://rg-optimalpricer.netlify.com/index.html</b><br/>
+<ins>Deployed Client:</ins> <b>https://airprice.now.sh/</b><br/>
+<ins>Backend Deploy:</ins> <b>https://price-op.herokuapp.com/</b><br/>
 
-AirPrice is a tool that airbnb hosts in Berlin can use to determine the optimal price for their rental. This app consists of a landing page, react client app, node express backend, and a python API that performed data science magic. 
+<p>AirPrice is a tool that airbnb hosts in Berlin can use to determine the optimal price for their rental. This app consists of a landing page, react client app, node express backend, and a python API that performed data science magic.</p>
 
 <h2>What I learned</h2>
 
