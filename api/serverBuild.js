@@ -3,6 +3,9 @@ const server = require('express')();
 const build = require('./middleware/server-mw');
 //api
 const apiRouter = require('./api-router.js');
+// cors
+var cors = require('cors')
+server.use(cors())
 
 build(server);
 
