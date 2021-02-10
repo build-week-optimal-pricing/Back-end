@@ -4,6 +4,7 @@ const db = require('../dbConfig');
 const hostControls = {
   addHost, //addHost(host)
   removeHost, //removeHost(hostId)
+  editHost, //editHost(changes, hostId)
 }
 
 const adminControls = {
@@ -23,6 +24,10 @@ function addHost(host) {
 }
 function removeHost(hostId) {
   return db('hosts').where({ id: hostId }).del();
+}
+function editHost(changes, hostId) {
+  return db('hosts').where({ id: hostId }).update(changes).returning('*');
+  // check what this returns??
 }
 
 //one can remove an admin by id, however id information will not be made available

@@ -1,5 +1,11 @@
 require('dotenv').config();
 
-const db = require('knex')(require('../knexfile.js')[process.env.DB_ENV]);
+const db = () => {
+  if(process.env.DATABASE_URL) {
+    return require('knex')(require('../knexfile.js').production)
+  } else {
+    return require('knex')(require('../knexfile.js').development)
+  }
+}
 
-module.exports = db;
+module.exports = db();

@@ -14,10 +14,17 @@ const hostFinders = {
 
 }
 
+const listingFinders = {
+  findListings,
+  findListingById, //findListingById(id)
+  findListingsByHostId, //findListingByHostId(hostId)
+  countListingsByHostId //countListingsByHostId(hostId)
+}
+
 module.exports = {
   hostFinders,
   adminFinders,
-  
+  listingFinders
 }
 
 //hosts
@@ -41,3 +48,20 @@ function findAdminById(id) {
 function findAdminByUsername(username) {
   return db('admins').where({ username }).first();
 }
+
+//listings
+function findListings() {
+  return db('listings');
+}
+
+function findListingById(id) {
+  return db('listings').where({ id }).first();
+}
+
+function findListingsByHostId(hostId) {
+  return db('listings').where({ host_id: hostId });
+}
+
+function countListingsByHostId(hostId) {
+  return db('listings').count('id as count').where({ host_id: hostId }).first();
+}// make sure this returns an integer
