@@ -42,17 +42,24 @@ module.exports = {
 
   production: {
     client: 'postgresql',
-    connection: 'postgres://wievkcqrobrunw:5f3cf05238bf3d36a1bdb086e5399192e47cf70b9fbc5dec43e244f0e90fd534@ec2-3-220-86-239.compute-1.amazonaws.com:5432/dca0o1ojctjou6',
+    connection: {
+      port: process.env.DATABASE_PORT,
+      host: process.env.DATABASE_HOST,
+      database: process.env.DATABASE_NAME,
+      user: process.env.DATABASE_USER,
+      password: process.env.DATABASE_ACCESS_KEY,
+    },
     pool: {
       min: 2,
       max: 10
     },
     migrations: {
-      directory: './data/migrations'
+      directory: './data/migrations',
+      tableName: 'knex_migrations'
     },
     seeds: {
-      directory: './data/seeds'
-    }
+      directory: './db/seeds',
+    },
   }
 
 };
